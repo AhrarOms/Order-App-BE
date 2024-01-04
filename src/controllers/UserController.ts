@@ -111,6 +111,8 @@ export const UserLogin = async (
         signature,
         id: user._id,
         firstName: user.firstName,
+        role: user.role,
+        email: user.email,
       });
     }
   }

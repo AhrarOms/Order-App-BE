@@ -23,14 +23,15 @@ export const AdminLogin = async (
     if (validation) {
       const signature = await GenerateSignature({
         _id: user._id,
-        phone: user.phone,
         role: user.role,
       });
 
       return res.status(200).json({
         signature,
-        phone: user.phone,
+        email: user.email,
         id: user._id,
+        role: user.role,
+        firstName: user.firstName,
       });
     }
   }

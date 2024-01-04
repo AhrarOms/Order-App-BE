@@ -22,7 +22,7 @@ const RequestTicketSchema = new Schema(
     sellingPrice: { type: Number },
     status: { type: String },
     image: { type: String },
-    requester: { type: Schema.Types.ObjectId, ref: "User" },
+    requester: { type: Schema.Types.ObjectId, ref: "user" },
     createdAt: { type: Date, default: Date.now },
   },
   {
@@ -31,8 +31,6 @@ const RequestTicketSchema = new Schema(
         delete ret.password;
         delete ret.salt;
         delete ret.__v;
-        delete ret.createdAt;
-        delete ret.updatedAt;
       },
     },
     timestamps: true,
