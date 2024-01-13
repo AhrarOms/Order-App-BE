@@ -9,6 +9,8 @@ import {
   DeleteRequest,
   ChangeRequestTicketStatus,
   GetAllRequest,
+  ApproveOrRejectRequestTicket,
+  AddCounter,
 } from "../controllers/UserController";
 
 import { Authenticate } from "../middleware";
@@ -23,6 +25,9 @@ router.post("/login", UserLogin);
 
 /* ------------------- Forget Password --------------------- */
 router.post("/forget-password", UserForgetPassword);
+
+/* ------------------- add counter --------------------- */
+router.post("/add-counter", AddCounter);
 
 /* ------------------- Authentication --------------------- */
 router.use(Authenticate);
@@ -46,5 +51,7 @@ router.delete("/delete-request/:id", DeleteRequest);
 /* ------------------- Change Status --------------------- */
 
 router.put("/change-status/:id", ChangeRequestTicketStatus);
+
+router.put("/approve-or-reject-request/:id", ApproveOrRejectRequestTicket);
 
 export { router as UserRoute };

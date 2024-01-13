@@ -120,45 +120,24 @@ export const UserLogin = async (
   return res.json({ msg: "Message" });
 };
 
-export const GetCustomerProfile = async (
+// Approve or Reject Request Ticket and Save it on DB
+
+export const ApproveOrRejectRequestTicket = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const customer = req.user;
+  const { status } = req.body;
+  const ticket = await RequestTicket.findById(req.params.id);
+  const user = req.user;
 
-  if (customer) {
-    const profile = await User.findById(customer._id);
-
-    if (profile) {
-      return res.status(201).json(profile);
-    }
+  if (ticket && user?.role === Role.Admin) {
+    ticket.status = status;
+    await ticket.save();
+    return res.status(200).json({ msg: "Request Ticket Updated" });
   }
-  return res.status(400).json({ msg: "Error while Fetching Profile" });
-};
 
-export const EditCustomerProfile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const customer = req.user;
-
-  const { firstName, lastName, address } = req.body;
-
-  if (customer) {
-    const profile = await User.findById(customer._id);
-
-    if (profile) {
-      profile.firstName = firstName;
-      profile.lastName = lastName;
-      profile.address = address;
-      const result = await profile.save();
-
-      return res.status(201).json(result);
-    }
-  }
-  return res.status(400).json({ msg: "Error while Updating Profile" });
+  return res.status(404).json({ msg: "Request Ticket Not Found" });
 };
 
 export const UserForgetPassword = async (
@@ -375,4 +354,20 @@ export const ChangeRequestTicketStatus = async (
   } catch (err) {
     return res.status(500).json({ msg: "Internal Server Error" });
   }
+};
+
+// populate Counter unitial counter seq is 0 and name is request
+
+export const AddCounter = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name } = req.body;
+
+  const counter = new Counter({
+    name: name,
+  });
+  await counter.save();
+  return res.status(200).json({ msg: "Counter Added" });
 };
