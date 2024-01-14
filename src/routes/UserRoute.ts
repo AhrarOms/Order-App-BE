@@ -11,6 +11,7 @@ import {
   GetAllRequest,
   ApproveOrRejectRequestTicket,
   AddCounter,
+  GetAllUsers,
 } from "../controllers/UserController";
 
 import { Authenticate } from "../middleware";
@@ -53,5 +54,7 @@ router.delete("/delete-request/:id", DeleteRequest);
 router.put("/change-status/:id", ChangeRequestTicketStatus);
 
 router.put("/approve-or-reject-request/:id", ApproveOrRejectRequestTicket);
+
+router.get("/get-all-users", GetAllUsers);
 
 export { router as UserRoute };
