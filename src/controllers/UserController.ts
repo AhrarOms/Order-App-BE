@@ -371,3 +371,27 @@ export const AddCounter = async (
   await counter.save();
   return res.status(200).json({ msg: "Counter Added" });
 };
+
+// get all users except role "Admin" check thr role if it is admin then return all users
+
+export const GetAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const users = await User.find({ role: { $ne: Role.Admin } });
+
+      if (users) {
+        return res.status(201).json(users);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Users" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
