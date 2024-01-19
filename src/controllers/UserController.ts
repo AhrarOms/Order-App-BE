@@ -127,12 +127,13 @@ export const ApproveOrRejectRequestTicket = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { status } = req.body;
+  const { status, comments } = req.body;
   const ticket = await RequestTicket.findById(req.params.id);
   const user = req.user;
 
   if (ticket && user?.role === Role.Admin) {
     ticket.status = status;
+    ticket.comments = comments;
     await ticket.save();
     return res.status(200).json({ msg: "Request Ticket Updated" });
   }
@@ -146,9 +147,9 @@ export const UserForgetPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { email, classId, newPassword } = req.body;
+    const { email, newPassword } = req.body;
 
-    const user = await User.findOne({ email, classId });
+    const user = await User.findOne({ email });
 
     const salt = await GenerateSalt();
     const userPassword = await GeneratePassword(newPassword, salt);
@@ -391,6 +392,58 @@ export const GetAllUsers = async (
     }
 
     return res.status(400).json({ msg: "Error while Fetching Users" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// delete user
+
+export const DeleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const user = await User.findById(req.params.id);
+
+      if (user) {
+        await user.remove();
+        return res.status(201).json({ msg: "User Deleted Successfully" });
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Deleting User" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// change status by Purchaser check if the request ticket is in approved status then only change the status
+
+export const ChangeStatusByPurchaser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Purchaser) {
+      const request = await RequestTicket.findById(req.params.id);
+
+      if (request && request.status === Status.Approved) {
+        request.status = req.body.status;
+
+        const result = await request.save();
+        return res.status(201).json(result);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Changing Status" });
   } catch (err) {
     return res.status(500).json({ msg: "Internal Server Error" });
   }
