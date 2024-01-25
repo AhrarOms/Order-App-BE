@@ -14,6 +14,7 @@ import {
   GetAllUsers,
   DeleteUser,
   ChangeStatusByPurchaser,
+  GetRequestByRequesterId,
 } from "../controllers/UserController";
 
 import { Authenticate } from "../middleware";
@@ -62,5 +63,7 @@ router.get("/get-all-users", GetAllUsers);
 router.delete("/delete-user/:id", DeleteUser);
 
 router.put("/change-status-by-purchaser/:id", ChangeStatusByPurchaser);
+
+router.get("/get-request-by-requester-id", GetRequestByRequesterId);
 
 export { router as UserRoute };

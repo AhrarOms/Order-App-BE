@@ -305,6 +305,32 @@ export const GetAllRequest = async (
   }
 };
 
+// get requestes by requester id
+
+export const GetRequestByRequesterId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Requester) {
+      const request = await RequestTicket.find({
+        requester: mongoose.Types.ObjectId(user?._id),
+      });
+
+      if (request) {
+        return res.status(201).json(request);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Request" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
 // delete request
 
 export const DeleteRequest = async (
@@ -437,6 +463,7 @@ export const ChangeStatusByPurchaser = async (
 
       if (request && request.status === Status.Approved) {
         request.status = req.body.status;
+        request.eta = req.body?.eta;
 
         const result = await request.save();
         return res.status(201).json(result);
