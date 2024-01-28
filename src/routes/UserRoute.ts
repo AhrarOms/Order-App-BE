@@ -15,6 +15,8 @@ import {
   DeleteUser,
   ChangeStatusByPurchaser,
   GetRequestByRequesterId,
+  GetAllLogs,
+  GetAllLogsByRequester,
 } from "../controllers/UserController";
 
 import { Authenticate } from "../middleware";
@@ -65,5 +67,9 @@ router.delete("/delete-user/:id", DeleteUser);
 router.put("/change-status-by-purchaser/:id", ChangeStatusByPurchaser);
 
 router.get("/get-request-by-requester-id", GetRequestByRequesterId);
+
+router.get("/get-all-logs", GetAllLogs);
+
+router.get("/get-all-logs-by-requester", GetAllLogsByRequester);
 
 export { router as UserRoute };

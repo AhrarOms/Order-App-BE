@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { User } from "../models";
+import { Log, User } from "../models";
 
 import {
   GeneratePassword,
@@ -135,6 +135,15 @@ export const ApproveOrRejectRequestTicket = async (
     ticket.status = status;
     ticket.comments = comments;
     await ticket.save();
+
+    // create log
+    new Log({
+      requestId: ticket._id,
+      pastStatus: ticket.status,
+      currentStatus: status,
+      user: user._id,
+    });
+
     return res.status(200).json({ msg: "Request Ticket Updated" });
   }
 
@@ -292,7 +301,9 @@ export const GetAllRequest = async (
         user.role === Role.Admin ||
         user.role === Role.Requester)
     ) {
-      const request = await RequestTicket.find({});
+      const request = await RequestTicket.find({})
+        .sort({ createdAt: -1 })
+        .populate("requester");
 
       if (request) {
         return res.status(201).json(request);
@@ -318,7 +329,9 @@ export const GetRequestByRequesterId = async (
     if (user && user.role === Role.Requester) {
       const request = await RequestTicket.find({
         requester: mongoose.Types.ObjectId(user?._id),
-      });
+      })
+        .sort({ createdAt: -1 })
+        .populate("requester");
 
       if (request) {
         return res.status(201).json(request);
@@ -372,12 +385,69 @@ export const ChangeRequestTicketStatus = async (
       if (request && request.status === Status.Approved) {
         request.status = req.body.status;
 
+        new Log({
+          requestId: request._id,
+          pastStatus: request.status,
+          currentStatus: req.body.status,
+          user: user._id,
+        });
+
         const result = await request.save();
         return res.status(201).json(result);
       }
     }
 
     return res.status(400).json({ msg: "Error while Changing Status" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// get all logs by admin
+
+export const GetAllLogs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const logs = await Log.find({})
+        .sort({ createdAt: 1 })
+        .populate("user requestId");
+
+      if (logs) {
+        return res.status(201).json(logs);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Logs" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// get all logs by requester
+
+export const GetAllLogsByRequester = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const logs = await Log.find({
+      user: mongoose.Types.ObjectId(req.user?._id),
+    })
+      .sort({ createdAt: 1 })
+      .populate("user requestId");
+
+    if (logs) {
+      return res.status(201).json(logs);
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Logs" });
   } catch (err) {
     return res.status(500).json({ msg: "Internal Server Error" });
   }
