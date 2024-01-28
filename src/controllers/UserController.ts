@@ -285,7 +285,7 @@ export const GetRequest = async (
   }
 };
 
-// Get All Request
+// Get All Request without Status Goods_In_Warehouse and Rejected
 
 export const GetAllRequest = async (
   req: Request,
@@ -294,14 +294,16 @@ export const GetAllRequest = async (
 ) => {
   try {
     const user = req.user;
+    console.log("user", user);
 
     if (
-      user &&
-      (user.role === Role.Purchaser ||
-        user.role === Role.Admin ||
-        user.role === Role.Requester)
+      (user && user.role === Role.Admin) ||
+      user.role === Role.Purchaser ||
+      user.role === Role.Requester
     ) {
-      const request = await RequestTicket.find({})
+      const request = await RequestTicket.find({
+        status: { $nin: [Status.Goods_In_Warehouse, Status.Rejected] },
+      })
         .sort({ createdAt: -1 })
         .populate("requester");
 
@@ -441,6 +443,31 @@ export const GetAllLogsByRequester = async (
       user: mongoose.Types.ObjectId(req.user?._id),
     })
       .sort({ createdAt: 1 })
+      .populate("user requestId")
+      .limit(20);
+
+    if (logs) {
+      return res.status(201).json(logs);
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Logs" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// get logs by request id
+
+export const GetLogsByRequestId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const logs = await Log.find({
+      requestId: mongoose.Types.ObjectId(req.params.id),
+    })
+      .sort({ createdAt: -1 })
       .populate("user requestId");
 
     if (logs) {
@@ -541,6 +568,35 @@ export const ChangeStatusByPurchaser = async (
     }
 
     return res.status(400).json({ msg: "Error while Changing Status" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// get all request with the satatus Rejected and Goods_In_Warehouse
+
+export const GetAllRequestWithRejectedStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    console.log("user", user);
+
+    if ((user && user.role === Role.Admin) || user.role === Role.Purchaser) {
+      const request = await RequestTicket.find({
+        status: { $in: [Status.Rejected, Status.Goods_In_Warehouse] },
+      })
+        .sort({ createdAt: -1 })
+        .populate("requester");
+
+      if (request) {
+        return res.status(201).json(request);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Request" });
   } catch (err) {
     return res.status(500).json({ msg: "Internal Server Error" });
   }

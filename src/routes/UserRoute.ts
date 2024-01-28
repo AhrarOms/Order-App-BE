@@ -17,6 +17,8 @@ import {
   GetRequestByRequesterId,
   GetAllLogs,
   GetAllLogsByRequester,
+  GetLogsByRequestId,
+  GetAllRequestWithRejectedStatus,
 } from "../controllers/UserController";
 
 import { Authenticate } from "../middleware";
@@ -71,5 +73,12 @@ router.get("/get-request-by-requester-id", GetRequestByRequesterId);
 router.get("/get-all-logs", GetAllLogs);
 
 router.get("/get-all-logs-by-requester", GetAllLogsByRequester);
+
+router.get("/get-logs-by-request-id/:id", GetLogsByRequestId);
+
+router.get(
+  "/get-all-request-with-rejected-status",
+  GetAllRequestWithRejectedStatus
+);
 
 export { router as UserRoute };
