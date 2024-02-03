@@ -11,5 +11,5 @@ export enum Status {
   Order_Placed = "Order Placed",
   In_Transit = "In Transit",
   Shipment_Arrived = "Shipment Arrived",
-  Goods_In_Warehouse = "Goods In Warehouse",
+  Goods_In_Warehouse = "Goods-In-Warehouse",
 }

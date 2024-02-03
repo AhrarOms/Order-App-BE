@@ -137,12 +137,14 @@ export const ApproveOrRejectRequestTicket = async (
     await ticket.save();
 
     // create log
-    new Log({
+    const log = new Log({
       requestId: ticket._id,
       pastStatus: ticket.status,
       currentStatus: status,
       user: user._id,
     });
+
+    await log.save();
 
     return res.status(200).json({ msg: "Request Ticket Updated" });
   }
@@ -150,7 +152,7 @@ export const ApproveOrRejectRequestTicket = async (
   return res.status(404).json({ msg: "Request Ticket Not Found" });
 };
 
-export const UserForgetPassword = async (
+export const UserResetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -285,7 +287,7 @@ export const GetRequest = async (
   }
 };
 
-// Get All Request without Status Goods_In_Warehouse and Rejected
+// Get All current Request without Status Goods_In_Warehouse and Rejected
 
 export const GetAllRequest = async (
   req: Request,
@@ -318,9 +320,9 @@ export const GetAllRequest = async (
   }
 };
 
-// get requestes by requester id
+// get current requestes by requester id
 
-export const GetRequestByRequesterId = async (
+export const GetCurrentRequesterEntries = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -331,6 +333,68 @@ export const GetRequestByRequesterId = async (
     if (user && user.role === Role.Requester) {
       const request = await RequestTicket.find({
         requester: mongoose.Types.ObjectId(user?._id),
+        status: { $nin: [Status.Goods_In_Warehouse, Status.Rejected] },
+      })
+        .sort({ createdAt: -1 })
+        .populate("requester");
+
+      if (request) {
+        return res.status(201).json(request);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Request" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+// Get All Past Request without Status Goods_In_Warehouse and Rejected
+
+export const GetAllPastRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    console.log("user", user);
+
+    if (
+      (user && user.role === Role.Admin) ||
+      user.role === Role.Purchaser ||
+      user.role === Role.Requester
+    ) {
+      const request = await RequestTicket.find({
+        status: { $in: [Status.Goods_In_Warehouse, Status.Rejected] },
+      })
+        .sort({ createdAt: -1 })
+        .populate("requester");
+
+      if (request) {
+        return res.status(201).json(request);
+      }
+    }
+
+    return res.status(400).json({ msg: "Error while Fetching Request" });
+  } catch (err) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+// get current requestes by requester id
+
+export const GetPastRequesterEntries = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Requester) {
+      const request = await RequestTicket.find({
+        requester: mongoose.Types.ObjectId(user?._id),
+        status: { $in: [Status.Goods_In_Warehouse, Status.Rejected] },
       })
         .sort({ createdAt: -1 })
         .populate("requester");
@@ -384,15 +448,21 @@ export const ChangeRequestTicketStatus = async (
     if (user && user.role === Role.Purchaser) {
       const request = await RequestTicket.findById(req.params.id);
 
-      if (request && request.status === Status.Approved) {
+      if (request) {
         request.status = req.body.status;
 
-        new Log({
+        if (req.body?.eta) {
+          request.eta = req.body.eta;
+        }
+
+        const log = new Log({
           requestId: request._id,
           pastStatus: request.status,
           currentStatus: req.body.status,
           user: user._id,
         });
+
+        await log.save();
 
         const result = await request.save();
         return res.status(201).json(result);
@@ -467,7 +537,7 @@ export const GetLogsByRequestId = async (
     const logs = await Log.find({
       requestId: mongoose.Types.ObjectId(req.params.id),
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .populate("user requestId");
 
     if (logs) {
@@ -507,7 +577,8 @@ export const GetAllUsers = async (
     const user = req.user;
 
     if (user && user.role === Role.Admin) {
-      const users = await User.find({ role: { $ne: Role.Admin } });
+      // const users = await User.find({ role: { $ne: Role.Admin } });
+      const users = await User.find();
 
       if (users) {
         return res.status(201).json(users);
