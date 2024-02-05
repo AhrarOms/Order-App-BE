@@ -11,6 +11,8 @@ interface RequestTicketDoc extends Document {
   image: string;
   requester: UserDoc;
   createdAt: Date;
+  comments: string;
+  eta: string;
 }
 
 const RequestTicketSchema = new Schema(
@@ -23,7 +25,9 @@ const RequestTicketSchema = new Schema(
     status: { type: String },
     image: { type: String },
     requester: { type: Schema.Types.ObjectId, ref: "user" },
+    comments: { type: String },
     createdAt: { type: Date, default: Date.now },
+    eta: { type: String },
   },
   {
     toJSON: {

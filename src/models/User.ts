@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model, ObjectId } from "mongoose";
 
 interface UserDoc extends Document {
   password: string;
@@ -13,6 +13,7 @@ interface UserDoc extends Document {
   email: string;
   address: string;
   classType: string;
+  _id: ObjectId;
 }
 
 const UserSchema = new Schema(
