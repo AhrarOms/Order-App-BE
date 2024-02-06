@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, ObjectId } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { UserDoc } from "./User";
 
 interface LogDoc extends Document {

@@ -20,8 +20,8 @@ EXPOSE 5000
 # ENV NODE_ENV production
 # Define environment variables
 ENV DB_NAME=ratingapp
-ENV DB_USER=promptratingapp
-ENV DB_PASSWORD=4rQLYD4Q7uUqOOQo
+ENV DB_USER=hgithmin
+ENV DB_PASSWORD=TGsnGmVDiRCftSHv
 ENV PORT=5000
 
 # Define the command to run your application
