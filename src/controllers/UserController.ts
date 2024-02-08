@@ -420,7 +420,7 @@ export const DeleteRequest = async (
   try {
     const user = req.user;
 
-    if (user && user.role === "Requester") {
+    if (user && user.role === "Admin") {
       const request = await RequestTicket.findById(req.params.id);
 
       if (request) {
