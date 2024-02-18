@@ -1,5 +1,5 @@
 const express = require("express");
-const { App } = require("./services/ExpressApp");
+const { App } = require("./services/ExpressApp.ts");
 
 const { dbConnection } = require("./services/Database");
 const { startCronJob } = require("./utility/orderUtility");
