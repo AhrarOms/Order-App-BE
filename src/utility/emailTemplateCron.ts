@@ -1,4 +1,4 @@
-export const emailTemplate = (emailDetails: any) => {
+export const emailTemplateCron = (emailDetails: any) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -24,12 +24,10 @@ export const emailTemplate = (emailDetails: any) => {
               <tr>
                 <td>
                   <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e8eaed;margin:20px 0" />
-                  <p style="font-size:14px;line-height:26px;margin:16px 0;font-weight:700;color:#004dcf">${emailDetails.subject}</p>
+                  <p style="font-size:14px;line-height:26px;margin:16px 0;font-weight:700;color:#004dcf">Request Status Alert</p>
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Hello, ${emailDetails.requester}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">The status of your request for ${emailDetails.productName} has been changed by ${emailDetails.purchaser}.</p>
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">The status of your order for ${emailDetails.productName} hasn't been changed for the past 24 hours.</p>
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Request ID: ${emailDetails.reqId}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Previouse Status: ${emailDetails.previouseStatus}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">New Status: ${emailDetails.newStatus}</p>
 
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Date: ${emailDetails.date}</p>
                 </td>
