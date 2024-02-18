@@ -32,6 +32,7 @@ export const Login = async (
         id: user._id,
         role: user.role,
         firstName: user.firstName,
+        lastName: user.lastName,
       });
     }
   }
@@ -49,12 +50,14 @@ export const Login = async (
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+        lastName: user.lastName,
       });
 
       return res.status(200).json({
         signature,
         id: user._id,
         firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
         email: user.email,
       });
@@ -63,4 +66,3 @@ export const Login = async (
 
   return res.status(401).json({ msg: "Invalid Credentials" });
 };
-

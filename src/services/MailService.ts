@@ -1,8 +1,11 @@
 "use strict";
 import nodemailer from "nodemailer";
 import { emailTemplate } from "../utility/emailTemplate";
+import { emailTemplateAdmin } from "../utility/emailTemplateAdmin";
+import { emailTemplateCron } from "../utility/emailTemplateCron";
 
-export async function sendMail(email: string, id: string) {
+export async function sendMail(emailDetails: any, type: string) {
+  console.log("Sending email...", emailDetails);
   //let testAccount = await nodemailer.createTestAccount();
 
   let transporter = nodemailer.createTransport({
@@ -11,7 +14,7 @@ export async function sendMail(email: string, id: string) {
     secure: true, // upgrade later with STARTTLS
     auth: {
       user: "pererahemal594@gmail.com", // generated ethereal user
-      pass: "pshmmqeaubuektci", // generated ethereal password
+      pass: "cykv vuhx eops ccyl", // generated ethereal password
     },
   });
 
@@ -25,11 +28,21 @@ export async function sendMail(email: string, id: string) {
   //   },
   // });
 
+  const htmlType = () => {
+    if (type === "cron") {
+      return emailTemplateCron(emailDetails);
+    } else if (type === "approveRejectRequest") {
+      return emailTemplateAdmin(emailDetails);
+    } else {
+      return emailTemplate(emailDetails);
+    }
+  };
+
   let info = await transporter.sendMail({
     from: "pererahemal594@gmail.com", // sender address
-    to: email, // list of receivers
-    subject: "Registration", // Subject line// plain text body
-    html: emailTemplate(id), // html body
+    to: emailDetails?.email, // list of receivers
+    subject: emailDetails?.subject, // Subject line// plain text body
+    html: htmlType(), // html body
   });
 
   console.log("Message sent: %s", info.messageId);

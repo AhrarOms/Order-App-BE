@@ -43,6 +43,9 @@ export interface CustomerPayload {
   _id: string;
   phone: string;
   role: Role | String;
+  email: string;
+  firstName: string;
+  lastName: string;
 }
 
 export class CartItem {

@@ -16,20 +16,6 @@ import { Counter } from "../models/Counter";
 
 const mongoose = require("mongoose");
 
-export const sendEmailFunc = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, classId } = req.body;
-    await sendMail(email, classId);
-    return res.status(200).json({ message: "Email Sent" });
-  } catch (err) {
-    return res.sendStatus(500);
-  }
-};
-
 export const UserSignUp = async (
   req: Request,
   res: Response,
@@ -67,6 +53,9 @@ export const UserSignUp = async (
     const signature = await GenerateSignature({
       _id: result._id,
       phone: result.phone,
+      email: result.email,
+      firstName: result.firstName,
+      lastName: result.lastName,
       role: result.role,
     });
     // Send the result
@@ -79,7 +68,6 @@ export const UserSignUp = async (
       email: result.email,
     });
   } catch (err) {
-    console.log(err);
     return res.sendStatus(500);
   }
 };
@@ -103,6 +91,7 @@ export const UserLogin = async (
       const signature = await GenerateSignature({
         _id: user._id,
         firstName: user.firstName,
+        lastName: user?.lastName,
         email: user.email,
         role: user.role,
       });
@@ -128,8 +117,22 @@ export const ApproveOrRejectRequestTicket = async (
   next: NextFunction
 ) => {
   const { status, comments } = req.body;
-  const ticket = await RequestTicket.findById(req.params.id);
+  const ticket = await RequestTicket.findById(req.params.id).populate(
+    "requester"
+  );
   const user = req.user;
+
+  const emailDetails = {
+    email: ticket?.requester.email,
+    subject: `Request Ticket Status ${status}`,
+    purchaser: `Administartor`,
+    requester: `${ticket?.requester.firstName} ${ticket?.requester.lastName}`,
+    previouseStatus: ticket?.status,
+    newStatus: req.body.status,
+    date: new Date().toLocaleString(),
+    productName: ticket?.productName,
+    reqId: ticket?.reqId,
+  };
 
   if (ticket && user?.role === Role.Admin) {
     ticket.status = status;
@@ -145,6 +148,8 @@ export const ApproveOrRejectRequestTicket = async (
     });
 
     await log.save();
+
+    await sendMail(emailDetails, "approveRejectRequest");
 
     return res.status(200).json({ msg: "Request Ticket Updated" });
   }
@@ -192,15 +197,12 @@ export const AddRequest = async (
       req.body;
 
     const user = req.user;
-    console.log("USer", user.role);
-    console.log("USer", Role.Admin);
 
     // update Counter check if there is counter or create new one
 
     const counter = await Counter.findOne({ name: "request" });
 
     if (user?.role === Role.Requester || user?.role === Role.Admin) {
-      console.log("Counter------");
       const request = new RequestTicket({
         productName,
         quantity,
@@ -223,7 +225,6 @@ export const AddRequest = async (
 
     return res.status(400).json({ msg: "Error while Adding Request" });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ msg: "Internal Server Error" });
   }
 };
@@ -296,7 +297,6 @@ export const GetAllRequest = async (
 ) => {
   try {
     const user = req.user;
-    console.log("user", user);
 
     if (
       (user && user.role === Role.Admin) ||
@@ -357,7 +357,6 @@ export const GetAllPastRequest = async (
 ) => {
   try {
     const user = req.user;
-    console.log("user", user);
 
     if (
       (user && user.role === Role.Admin) ||
@@ -446,7 +445,21 @@ export const ChangeRequestTicketStatus = async (
     const user = req.user;
 
     if (user && user.role === Role.Purchaser) {
-      const request = await RequestTicket.findById(req.params.id);
+      const request = await RequestTicket.findById(req.params.id).populate(
+        "requester"
+      );
+
+      const emailDetails = {
+        email: request?.requester.email,
+        subject: "Request Ticket Status Changed",
+        purchaser: `${user.firstName} ${user.lastName}`,
+        requester: `${request?.requester.firstName} ${request?.requester.lastName}`,
+        previouseStatus: request?.status,
+        newStatus: req.body.status,
+        date: new Date().toLocaleString(),
+        productName: request?.productName,
+        reqId: request?.reqId,
+      };
 
       if (request) {
         request.status = req.body.status;
@@ -465,6 +478,8 @@ export const ChangeRequestTicketStatus = async (
         await log.save();
 
         const result = await request.save();
+        await sendMail(emailDetails, "changeRequestStatus");
+
         return res.status(201).json(result);
       }
     }
@@ -616,34 +631,6 @@ export const DeleteUser = async (
   }
 };
 
-// change status by Purchaser check if the request ticket is in approved status then only change the status
-
-export const ChangeStatusByPurchaser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const user = req.user;
-
-    if (user && user.role === Role.Purchaser) {
-      const request = await RequestTicket.findById(req.params.id);
-
-      if (request && request.status === Status.Approved) {
-        request.status = req.body.status;
-        request.eta = req.body?.eta;
-
-        const result = await request.save();
-        return res.status(201).json(result);
-      }
-    }
-
-    return res.status(400).json({ msg: "Error while Changing Status" });
-  } catch (err) {
-    return res.status(500).json({ msg: "Internal Server Error" });
-  }
-};
-
 // get all request with the satatus Rejected and Goods_In_Warehouse
 
 export const GetAllRequestWithRejectedStatus = async (
@@ -653,7 +640,6 @@ export const GetAllRequestWithRejectedStatus = async (
 ) => {
   try {
     const user = req.user;
-    console.log("user", user);
 
     if ((user && user.role === Role.Admin) || user.role === Role.Purchaser) {
       const request = await RequestTicket.find({
