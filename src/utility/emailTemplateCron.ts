@@ -38,8 +38,9 @@ export const emailTemplateCron = (emailDetails: any) => {
             <tbody>
               <tr>
                 <td>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Thank you,</p>
-                  <p style="font-size:20px;line-height:22px;margin:16px 0;color:#3c4043">Alahrar Hotel Supplies</p>
+                <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Thanks & Regards</p>
+                <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Import Team</p>
+                <p style="font-size:20px;line-height:22px;margin:16px 0;color:#3c4043">Al Ahrar Hotel Supplies</p>
                 </td>
               </tr>
             </tbody>

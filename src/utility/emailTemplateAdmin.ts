@@ -1,4 +1,4 @@
-export const emailTemplateAdmin = (emailDetails: any) => {
+export const emailTemplateAdmin = (emailDetails: any, description: string) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -25,13 +25,10 @@ export const emailTemplateAdmin = (emailDetails: any) => {
                 <td>
                   <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e8eaed;margin:20px 0" />
                   <p style="font-size:14px;line-height:26px;margin:16px 0;font-weight:700;color:#004dcf">${emailDetails.subject}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Hello, ${emailDetails.requester}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Your Request Ticket Has been ${emailDetails.newStatus} by ${emailDetails?.purchaser}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Request ID: ${emailDetails.reqId}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Previouse Status: ${emailDetails.previouseStatus}</p>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">New Status: ${emailDetails.newStatus}</p>
-
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Heloo, ${emailDetails.requester}</p>
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Date: ${emailDetails.date}</p>
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">${description}</p>
+
                 </td>
               </tr>
             </tbody>
@@ -40,8 +37,9 @@ export const emailTemplateAdmin = (emailDetails: any) => {
             <tbody>
               <tr>
                 <td>
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Thank you,</p>
-                  <p style="font-size:20px;line-height:22px;margin:16px 0;color:#3c4043">Alahrar Hotel Supplies</p>
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Thanks & Regards</p>
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Import Team</p>
+                  <p style="font-size:20px;line-height:22px;margin:16px 0;color:#3c4043">Al Ahrar Hotel Supplies</p>
                 </td>
               </tr>
             </tbody>

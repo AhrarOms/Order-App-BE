@@ -459,6 +459,7 @@ export const ChangeRequestTicketStatus = async (
         date: new Date().toLocaleString(),
         productName: request?.productName,
         reqId: request?.reqId,
+        eta: req.body?.eta ? req.body?.eta : "",
       };
 
       if (request) {

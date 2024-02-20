@@ -8,8 +8,9 @@ export enum Status {
   Pending = "Pending",
   Approved = "Approved",
   Rejected = "Rejected",
-  Order_Placed = "Order Placed",
-  In_Transit = "In Transit",
-  Shipment_Arrived = "Shipment Arrived",
+  Order_Placed = "Order-Placed",
+  In_Production = "In-Production",
+  In_Transit = "In-Transit",
+  Shipment_Arrived = "Shipment-Arrived",
   Goods_In_Warehouse = "Goods-In-Warehouse",
 }
