@@ -14,7 +14,7 @@ export const emailTemplate = (emailDetails: any, description: string) => {
               <tr>
                 <td>
                   <img alt="Google Play developers header blue transparent" src="https://react-email-demo-ijnnx5hul-resend.vercel.app/static/google-play-header.png" width="305" height="28" style="display:block;outline:none;border:none;text-decoration:none;margin-top:-1px" />
-                  <img alt="Google Play" src="https://firebasestorage.googleapis.com/v0/b/s2a-e8459.appspot.com/o/dp%2F1680446972911%20-%20S2A.png?alt=media&token=16dd72c4-a7ad-47ae-8ba2-e06a3a12e528" width="300" height="101" style="display:block;outline:none;border:none;text-decoration:none;padding:0 40px" />
+                  <img alt="Google Play" src="https://firebasestorage.googleapis.com/v0/b/order-app-41e22.appspot.com/o/static%2Fheader.png?alt=media&token=3667a593-2a88-40c0-9fde-9e93c8e595c2%27" width="300" height="101" style="display:block;outline:none;border:none;text-decoration:none;padding:0 40px" />
                 </td>
               </tr>
             </tbody>
