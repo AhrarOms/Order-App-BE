@@ -23,7 +23,7 @@ export const emailTemplate = (emailDetails: any, description: string) => {
               <tr>
                 <td>
                   <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e8eaed;margin:20px 0" />
-                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Helloo, ${emailDetails.requester}</p>
+                  <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Heloo, ${emailDetails.requester}</p>
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">Date: ${emailDetails.date}</p>
                   <p style="font-size:14px;line-height:22px;margin:16px 0;color:#3c4043">${description}</p>
                 </td>
