@@ -13,7 +13,6 @@ export const emailTemplateCron = (emailDetails: any) => {
             <tbody>
               <tr>
                 <td>
-                  <img alt="Google Play developers header blue transparent" src="https://react-email-demo-ijnnx5hul-resend.vercel.app/static/google-play-header.png" width="305" height="28" style="display:block;outline:none;border:none;text-decoration:none;margin-top:-1px" />
                   <img alt="Google Play" src="https://firebasestorage.googleapis.com/v0/b/order-app-41e22.appspot.com/o/static%2Fheader.png?alt=media&token=3667a593-2a88-40c0-9fde-9e93c8e595c2%27" width="300" height="101" style="display:block;outline:none;border:none;text-decoration:none;padding:0 40px" />
                 </td>
               </tr>
