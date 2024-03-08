@@ -14,8 +14,8 @@ export async function sendMail(emailDetails: any, type: string) {
     port: 465,
     secure: true, // upgrade later with STARTTLS
     auth: {
-      user: "pererahemal594@gmail.com", // generated ethereal user
-      pass: "cykv vuhx eops ccyl", // generated ethereal password
+      user: process.env.EMAIL, // generated ethereal user
+      pass: process.env.EMAIL_PASS, // generated ethereal password
     },
   });
 
