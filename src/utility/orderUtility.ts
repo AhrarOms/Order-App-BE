@@ -52,7 +52,7 @@ export const checkAndNotify = async (): Promise<void> => {
 
 export const startCronJob = (): void => {
   // Schedule cron job to run every hour
-  cron.schedule("0 * * * *", () => {
+  cron.schedule("0 0 * * *", () => {
     checkAndNotify();
   });
 };
